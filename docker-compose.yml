@@ -1,0 +1,45 @@
+version: "3"
+services:
+  keycloak:
+    container_name: keycloak
+    hostname: keycloak
+    image: jboss/keycloak:latest
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+      DB_VENDOR: POSTGRES
+      DB_ADDR: postgres
+      DB_DATABASE: keycloak_db
+      DB_USER: user
+      DB_SCHEMA: public
+      DB_PASSWORD: password
+    ports:
+      - "8080:18080"
+    networks:
+      - app
+    command:
+      - "-b"
+      - "0.0.0.0"
+      - "-Djboss.socket.binding.port-offset=10000"
+    restart: on-failure
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres_init/postgres_init.sql:/docker-entrypoint-initdb.d/init-db.sql
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_MULTIPLE_DATABASES: app_db,keycloak_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    networks:
+      - app
+volumes:
+  postgres_data:
+    name: postgres_data
+    driver: local
+networks:
+  app:

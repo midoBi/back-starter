@@ -1,0 +1,34 @@
+server:
+  port: ${SERVER_PORT:8081}
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/my-app
+    username: ${SPRING_DATASOURCE_USERNAME:user}
+    password: ${SPRING_DATASOURCE_PASS:password}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show_sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    database: postgresql
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://127.0.0.1:8080/realms/my-app
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+    oauth:
+      use-pkce-with-authorization-code-grant: true
+      client-id: swagger-ui
+  packages-to-scan: com.dev.backend
+app:
+  services:
+    product: ${PRODUCT_CLIENT:http://api.app.local/product}
+    referentiel: ${PRODUCT_CLIENT:http://api.app.local/referentiel}
+
+
